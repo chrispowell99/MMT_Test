@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>MMT_Test.API</AssemblyName>
+    <RootNamespace>MMT_Test.API</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\MMT_Test.Common.csproj" />
+    <ProjectReference Include="..\MMT_Test.Data\MMT_Test.Data.csproj" />
+  </ItemGroup>
+
+</Project>
