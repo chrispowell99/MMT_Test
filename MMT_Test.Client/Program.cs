@@ -5,40 +5,62 @@ namespace MMT_Test.Client
 {
     class Program
     {
+        const string DEFAULTURL = "https://localhost:44329";
+
         static void Main(string[] args)
         {
+            var url = DEFAULTURL;
 
-            var MMT_API = new MMT_Test_API("https://localhost:44329");
+            Console.WriteLine("The deafult API address is 'https://localhost:44329'.");
+            Console.Write("Enter Y to confirm this is correct or N to enter a different address ");
+            var key3 = Console.ReadKey().Key;
+            if (key3 == ConsoleKey.N)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Please enter the API address and press enter");
+                url = Console.ReadLine();
+            }
+
+            var MMT_API = new MMT_Test_API(url);
 
             var exit = false;
             while (!exit)
             {
                 Console.WriteLine();
-                Console.WriteLine("Enter 1 for categories, 2 for Featured Products,E to exit");
+                Console.Write("Enter 1 for categories, 2 for Featured Products,E to exit");
                 var key = Console.ReadKey().Key;
                 if (key == ConsoleKey.NumPad1 || key == ConsoleKey.D1)
                 {
-                    var categories = MMT_API.GetCategories();
-                    if (categories.Any())
+                    Console.WriteLine();
+                    Console.WriteLine("Please Wait...");
+                    try
                     {
-                        Console.WriteLine();
-                        Console.WriteLine("All Categories:");
-                        Console.WriteLine("-----------");
-                        foreach (var category in categories)
+                        var categories = MMT_API.GetCategories();
+                        if (categories.Any())
                         {
-                            Console.WriteLine("Id: " + category.Id.ToString() + ", Name: " + category.Name);
+                            Console.WriteLine();
+                            Console.WriteLine("All Categories:");
+                            Console.WriteLine("-----------");
+                            foreach (var category in categories)
+                            {
+                                Console.WriteLine("Id: " + category.Id.ToString() + ", Name: " + category.Name);
+                            }
+                            Console.WriteLine("-----------");
                         }
-                        Console.WriteLine("-----------");
+                        else
+                        {
+                            Console.WriteLine("No categories found.");
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Console.WriteLine("No categories found.");
+                        Console.WriteLine(ex.Message);
                     }
                     var exitCategories = false;
                     while (!exitCategories)
                     {
                         Console.WriteLine();
-                        Console.WriteLine("Enter 1 to view the products for a category, E to exit.");
+                        Console.Write("Enter 1 to view the products for a category, E to exit.");
                         var key2 = Console.ReadKey().Key;
                         if (key2 == ConsoleKey.NumPad1 || key == ConsoleKey.D1)
                         {
@@ -50,23 +72,32 @@ namespace MMT_Test.Client
                                 {
                                     exitCategories = true;
                                 }
-                                else if (int.TryParse(categoryCode,out int categoryCodeId))
+                                else if (int.TryParse(categoryCode, out int categoryCodeId))
                                 {
-
-                                    var products = MMT_API.GetCategoryProducts(categoryCodeId);
-                                    if (products.Any())
+                                    Console.WriteLine();
+                                    Console.WriteLine("Please Wait...");
+                                    try
                                     {
-                                        Console.WriteLine("All products for cartgory Id" + categoryCode + ":");
-                                        Console.WriteLine("-----------");
-                                        foreach (var product in products)
+                                        var products = MMT_API.GetCategoryProducts(categoryCodeId);
+                                        if (products.Any())
                                         {
-                                            Console.WriteLine("Id: " + product.Id.ToString() + ", Name: " + product.Name);
+                                            Console.WriteLine();
+                                            Console.WriteLine("All products for cartgory Id" + categoryCode + ":");
+                                            Console.WriteLine("-----------");
+                                            foreach (var product in products)
+                                            {
+                                                Console.WriteLine("Id: " + product.Id.ToString() + ", Name: " + product.Name);
+                                            }
+                                            Console.WriteLine("-----------");
                                         }
-                                        Console.WriteLine("-----------");
+                                        else
+                                        {
+                                            Console.WriteLine("No products found for cartgory Id" + categoryCode);
+                                        }
                                     }
-                                    else
+                                    catch (Exception ex)
                                     {
-                                        Console.WriteLine("No products found for cartgory Id" + categoryCode);
+                                        Console.WriteLine(ex.Message);
                                     }
                                 }
                             }
@@ -77,28 +108,34 @@ namespace MMT_Test.Client
                         }
                     }
                 }
-
-
                 else if (key == ConsoleKey.NumPad2 || key == ConsoleKey.D2)
                 {
-                    var products = MMT_API.GetFeaturedProducts();
                     Console.WriteLine();
-                    if (products.Any())
+                    Console.WriteLine("Please Wait...");
+                    try
                     {
+                        var products = MMT_API.GetFeaturedProducts();
                         Console.WriteLine();
-                        Console.WriteLine("Featured products:");
-                        Console.WriteLine("-----------");
-                        foreach (var product in products)
+                        if (products.Any())
                         {
-                            Console.WriteLine("Id: " + product.Id.ToString() + ", Name: " + product.Name);
+                            Console.WriteLine();
+                            Console.WriteLine("Featured products:");
+                            Console.WriteLine("-----------");
+                            foreach (var product in products)
+                            {
+                                Console.WriteLine("Id: " + product.Id.ToString() + ", Name: " + product.Name);
+                            }
+                            Console.WriteLine("-----------");
                         }
-                        Console.WriteLine("-----------");
+                        else
+                        {
+                            Console.WriteLine("No featured products Found");
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Console.WriteLine("No featured products Found");
+                        Console.WriteLine(ex.Message);
                     }
-
                 }
                 else if (key == ConsoleKey.E)
                 {
@@ -110,7 +147,6 @@ namespace MMT_Test.Client
                     Console.WriteLine("Please try again.");
                 }
             }
-            
         }
     }
 }

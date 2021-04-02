@@ -1,11 +1,8 @@
 ﻿using MMT_Test.Common.Domain;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace MMT_Test.Client
 {
@@ -22,26 +19,62 @@ namespace MMT_Test.Client
 
         public List<Category> GetCategories()
         {
-            var result = httpClient.GetStringAsync(_URL + "/api/Category").Result;
-            return JsonSerializer.Deserialize<List<Category>>(result, new JsonSerializerOptions
+            var result = "";
+            try
             {
-                PropertyNameCaseInsensitive = true,
-            });
+                result = httpClient.GetStringAsync(_URL + "/api/Category").Result;
+            }
+            catch (Exception ex)
+            {
+                throw HandleException(ex);
+            }
+            return Deserialise<List<Category>>(result);
         }
 
         public List<Product> GetCategoryProducts(int categoryId)
         {
-            var result = httpClient.GetStringAsync(_URL + "/api/Category/" + categoryId.ToString() + "/products").Result;
-            return JsonSerializer.Deserialize<List<Product>>(result, new JsonSerializerOptions
+            var result = "";
+            try
             {
-                PropertyNameCaseInsensitive = true,
-            });
+                 result = httpClient.GetStringAsync(_URL + "/api/Category/" + categoryId.ToString() + "/products").Result;
+            }
+            catch (Exception ex)
+            {
+                throw HandleException(ex);
+            }
+            return Deserialise<List<Product>>(result);
         }
 
         public List<Product> GetFeaturedProducts()
         {
-            var result = httpClient.GetStringAsync(_URL + "/api/product/featured").Result;
-            return JsonSerializer.Deserialize<List<Product>>(result, new JsonSerializerOptions
+            var result = "";
+            try
+            {
+                 result = httpClient.GetStringAsync(_URL + "/api/product/featured").Result;
+            }
+            catch (Exception ex)
+            {
+                throw HandleException(ex);
+            }
+            return Deserialise<List<Product>>(result);
+        }
+
+        private Exception HandleException(Exception ex)
+        {
+            if (ex.InnerException is HttpRequestException)
+            {
+                return new Exception("There was a problem retrieveing the results: " + ex.Message);
+            }
+            else
+            {
+                
+                return new Exception("There was a problem connecting to the API.");
+            }
+        }
+
+        private T Deserialise<T>(string json)
+        {
+            return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
             });
